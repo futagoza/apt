@@ -35,4 +35,4 @@ jobs:
       inputs: 
         codeCoverageTool: Cobertura
         summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
-      reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'
+        reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'
