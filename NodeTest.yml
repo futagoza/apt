@@ -1,0 +1,38 @@
+parameters:
+  name: 'Test'
+  vmImage: 'ubuntu-16.04'
+  node_version: 10.x
+  install_tool: 'yarn'
+  before: []
+  after: []
+  azure_coverage: False
+
+jobs:
+- job: ${{ format('{0} (Node {1})', parameters.name, parameters.node_version) }}
+  pool: 
+    vmImage: ${{ parameters.vmImage }}
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: ${{ parameters.node_version }}
+    displayName: 'Install Node.js'
+  - ${{ if eq(parameters.install_tool, 'npm') }}:
+    - script: npm install
+  - ${{ if eq(parameters.install_tool, 'yarn') }}:
+    - script: yarn install --ignore-engines
+  - ${{ parameters.before }}
+  - script: npm test
+  - ${{ parameters.after }}
+  - ${{ if eq(parameters.azure_coverage, True) }}:
+    - task: PublishTestResults@2
+      displayName: 'Publish test results (Azure Pipelines)'
+      condition: succeededOrFailed()
+      inputs:
+        testRunner: JUnit
+        testResultsFiles: 'coverage/junit.xml'
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish code coverage results (Azure Pipelines)'
+      inputs: 
+        codeCoverageTool: Cobertura
+        summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'
