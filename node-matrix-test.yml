@@ -12,14 +12,13 @@ parameters:
 
 jobs:
 - ${{ each node_version in parameters.node_versions }}:
-  - ${{ each pair in node_version }}:
-    - template: node-test.yml
-      parameters:
-        id: ${{ format('NodeTestRunner_{0}', pair.key) }}
-        name: ${{ parameters.name }}
-        vmImage: ${{ parameters.vmImage }}
-        node_version: ${{ pair.value }}
-        install_tool: ${{ parameters.install_tool }}
-        before: ${{ parameters.before }}
-        after: ${{ parameters.after }}
-        azure_coverage: ${{ parameters.azure_coverage }}
+  - template: node-test.yml
+    parameters:
+      id: ${{ format('NodeTestRunner_{0}', node_version.key) }}
+      name: ${{ parameters.name }}
+      vmImage: ${{ parameters.vmImage }}
+      node_version: ${{ node_version.value }}
+      install_tool: ${{ parameters.install_tool }}
+      before: ${{ parameters.before }}
+      after: ${{ parameters.after }}
+      azure_coverage: ${{ parameters.azure_coverage }}
