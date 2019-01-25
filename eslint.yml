@@ -1,5 +1,5 @@
 parameters:
-  name: 'ESLint'
+  name: 'Lint'
   vmImage: 'ubuntu-16.04'
   node_version: 10.x
   install_scope: 'eslint'
@@ -16,8 +16,12 @@ jobs:
     displayName: 'Install Node.js'
   - ${{ if eq(parameters.install_scope, 'eslint') }}:
     - script: npm i --no-save eslint eslint-config-futagozaryuu
+      displayName: 'Installing minimal dependencies'
   - ${{ if eq(parameters.install_scope, 'npm') }}:
     - script: npm install
+      displayName: 'Installing dependencies from NPM'
   - ${{ if eq(parameters.install_scope, 'yarn') }}:
     - script: yarn install --ignore-engines
+      displayName: 'Installing dependencies using Yarn'
   - script: ${{ parameters.job_script }}
+    displayName: 'Run ESLint'
