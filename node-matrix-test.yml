@@ -1,0 +1,23 @@
+parameters:
+  name: 'Test'
+  vmImage: 'ubuntu-16.04'
+  node_versions:
+    - 6.x
+    - 8.x
+    - 10.x
+  install_tool: 'yarn'
+  before: []
+  after: []
+  azure_coverage: False
+
+jobs:
+- ${{ each node_version in parameters.node_versions }}:
+  - template: node-test.yml
+    parameters:
+      name: ${{ parameters.name }}
+      vmImage: ${{ parameters.vmImage }}
+      node_version: ${{ node_version }}
+      install_tool: ${{ parameters.install_tool }}
+      before: ${{ parameters.before }}
+      after: ${{ parameters.after }}
+      azure_coverage: ${{ parameters.azure_coverage }}
