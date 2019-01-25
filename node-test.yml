@@ -8,7 +8,8 @@ parameters:
   azure_coverage: False
 
 jobs:
-- job: ${{ format('{0} (Node {1})', parameters.name, parameters.node_version) }}
+- job: NodeTestRunner
+  displayName: ${{ format('{0} (Node {1})', parameters.name, parameters.node_version) }}
   pool: 
     vmImage: ${{ parameters.vmImage }}
   steps:
