@@ -8,6 +8,8 @@ parameters:
     v10: 10.x
   package_manager: 'yarn'
   before: []
+  success_script: False
+  fail_script: False
   after: []
   publish_test_results_to_pipelines: False
   publish_code_coverage_to_pipelines: False
@@ -24,6 +26,8 @@ jobs:
         node_version: ${{ node_version.value }}
         package_manager: ${{ parameters.package_manager }}
         before: ${{ parameters.before }}
+        success_script: ${{ parameters.success_script }}
+        fail_script: ${{ parameters.fail_script }}
         after: ${{ parameters.after }}
         publish_test_results_to_pipelines: ${{ parameters.publish_test_results_to_pipelines }}
         publish_code_coverage_to_pipelines: ${{ parameters.publish_code_coverage_to_pipelines }}

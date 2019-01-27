@@ -6,6 +6,8 @@ parameters:
   node_version: 10.x
   package_manager: 'yarn'
   before: []
+  success_script: False
+  fail_script: False
   after: []
   publish_test_results_to_pipelines: False
   publish_code_coverage_to_pipelines: False
@@ -29,6 +31,12 @@ jobs:
   - ${{ parameters.before }}
   - script: npm test
     displayName: 'Run tests'
+  - script: ${{ parameters.success_script }}
+    displayName: 'Running post-test success script'
+    condition: and(succeeded(), ne(parameters.success_script, False))
+  - script: ${{ parameters.fail_script }}
+    displayName: 'Running post-test fail script'
+    condition: and(failed(), ne(parameters.fail_script, False))
   - ${{ parameters.after }}
   - ${{ if eq(parameters.publish_test_results_to_pipelines, True) }}:
     - task: PublishTestResults@2
