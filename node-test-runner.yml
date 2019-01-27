@@ -33,10 +33,10 @@ jobs:
     displayName: 'Run tests'
   - script: ${{ parameters.success_script }}
     displayName: 'Running post-test success script'
-    condition: and(succeeded(), ne(parameters.success_script, False))
+    condition: and(succeeded(), ne(variables['parameters.success_script'], False))
   - script: ${{ parameters.fail_script }}
     displayName: 'Running post-test fail script'
-    condition: and(failed(), ne(parameters.fail_script, False))
+    condition: and(failed(), ne(variables['parameters.fail_script'], False))
   - ${{ parameters.after }}
   - ${{ if eq(parameters.publish_test_results_to_pipelines, True) }}:
     - task: PublishTestResults@2
