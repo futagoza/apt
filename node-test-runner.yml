@@ -6,6 +6,7 @@ parameters:
   node_version: 10.x
   package_manager: 'yarn'
   before: []
+  npm_test: True
   after: []
   publish_test_results_to_pipelines: False
   publish_code_coverage_to_pipelines: False
@@ -27,8 +28,9 @@ jobs:
     - script: yarn install --ignore-engines
       displayName: 'Instal dependencies using Yarn'
   - ${{ parameters.before }}
-  - script: npm test
-    displayName: 'Run tests'
+  - ${{ if eq(parameters.npm_test, True) }}:
+    - script: npm test
+      displayName: 'Run tests'
   - ${{ parameters.after }}
   - ${{ if eq(parameters.publish_test_results_to_pipelines, True) }}:
     - task: PublishTestResults@2
