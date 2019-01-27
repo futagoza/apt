@@ -7,7 +7,8 @@ parameters:
   package_manager: 'yarn'
   before: []
   after: []
-  azure_coverage: False
+  publish_test_results_to_pipelines: False
+  publish_code_coverage_to_pipelines: False
 
 jobs:
 - job: ${{ parameters.id }}
@@ -29,13 +30,14 @@ jobs:
   - script: npm test
     displayName: 'Run tests'
   - ${{ parameters.after }}
-  - ${{ if eq(parameters.azure_coverage, True) }}:
+  - ${{ if eq(parameters.publish_test_results_to_pipelines, True) }}:
     - task: PublishTestResults@2
       displayName: 'Publish test results (Azure Pipelines)'
       condition: succeededOrFailed()
       inputs:
         testRunner: JUnit
         testResultsFiles: 'coverage/junit.xml'
+  - ${{ if eq(parameters.publish_code_coverage_to_pipelines, True) }}:
     - task: PublishCodeCoverageResults@1
       displayName: 'Publish code coverage results (Azure Pipelines)'
       inputs: 

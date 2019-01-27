@@ -9,7 +9,8 @@ parameters:
   package_manager: 'yarn'
   before: []
   after: []
-  azure_coverage: False
+  publish_test_results_to_pipelines: False
+  publish_code_coverage_to_pipelines: False
 
 jobs:
 - ${{ each platform in parameters.platforms }}:
@@ -24,4 +25,5 @@ jobs:
         package_manager: ${{ parameters.package_manager }}
         before: ${{ parameters.before }}
         after: ${{ parameters.after }}
-        azure_coverage: ${{ parameters.azure_coverage }}
+        publish_test_results_to_pipelines: ${{ parameters.publish_test_results_to_pipelines }}
+        publish_code_coverage_to_pipelines: ${{ parameters.publish_code_coverage_to_pipelines }}
