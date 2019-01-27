@@ -23,10 +23,10 @@ jobs:
     displayName: 'Install Node.js'
   - ${{ if eq(parameters.package_manager, 'npm') }}:
     - script: npm install
-      displayName: 'Instal dependencies from NPM'
+      displayName: 'Install dependencies from NPM'
   - ${{ if eq(parameters.package_manager, 'yarn') }}:
     - script: yarn install --ignore-engines
-      displayName: 'Instal dependencies using Yarn'
+      displayName: 'Install dependencies using Yarn'
   - ${{ parameters.before }}
   - ${{ if eq(parameters.npm_test, True) }}:
     - script: npm test
