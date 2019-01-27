@@ -2,6 +2,7 @@ parameters:
   id: 'NodeTestRunner'
   name: 'Test'
   vmImage: 'ubuntu-16.04'
+  vmOS: 'Linux'
   node_version: 10.x
   install_tool: 'yarn'
   before: []
@@ -10,7 +11,7 @@ parameters:
 
 jobs:
 - job: ${{ parameters.id }}
-  displayName: ${{ format('{0} (Node {1})', parameters.name, parameters.node_version) }}
+  displayName: ${{ format('{0} ({1}, Node {2})', parameters.name, parameters.vmOS, parameters.node_version) }}
   pool: 
     vmImage: ${{ parameters.vmImage }}
   steps:

@@ -1,6 +1,7 @@
 parameters:
   name: 'Test'
-  vmImage: 'ubuntu-16.04'
+  platforms:
+    Linux: 'ubuntu-16.04'
   node_versions:
     v6: 6.x
     v8: 8.x
@@ -11,14 +12,16 @@ parameters:
   azure_coverage: False
 
 jobs:
-- ${{ each node_version in parameters.node_versions }}:
-  - template: node-test-runner.yml
-    parameters:
-      id: ${{ format('NodeTestRunner_{0}', node_version.key) }}
-      name: ${{ parameters.name }}
-      vmImage: ${{ parameters.vmImage }}
-      node_version: ${{ node_version.value }}
-      install_tool: ${{ parameters.install_tool }}
-      before: ${{ parameters.before }}
-      after: ${{ parameters.after }}
-      azure_coverage: ${{ parameters.azure_coverage }}
+- ${{ each platform in parameters.platforms }}:
+  - ${{ each node_version in parameters.node_versions }}:
+    - template: node-test-runner.yml
+      parameters:
+        id: ${{ format('{0}_Node_{1}', platform.key, node_version.key) }}
+        name: ${{ parameters.name }}
+        vmImage: ${{ platform.value }}
+        vmOS: ${{ platform.key }}
+        node_version: ${{ node_version.value }}
+        install_tool: ${{ parameters.install_tool }}
+        before: ${{ parameters.before }}
+        after: ${{ parameters.after }}
+        azure_coverage: ${{ parameters.azure_coverage }}
