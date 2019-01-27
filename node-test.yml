@@ -6,7 +6,7 @@ parameters:
     v6: 6.x
     v8: 8.x
     v10: 10.x
-  install_tool: 'yarn'
+  package_manager: 'yarn'
   before: []
   after: []
   azure_coverage: False
@@ -21,7 +21,7 @@ jobs:
         vmImage: ${{ platform.value }}
         vmOS: ${{ platform.key }}
         node_version: ${{ node_version.value }}
-        install_tool: ${{ parameters.install_tool }}
+        package_manager: ${{ parameters.package_manager }}
         before: ${{ parameters.before }}
         after: ${{ parameters.after }}
         azure_coverage: ${{ parameters.azure_coverage }}

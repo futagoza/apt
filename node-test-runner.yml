@@ -4,7 +4,7 @@ parameters:
   vmImage: 'ubuntu-16.04'
   vmOS: 'Linux'
   node_version: 10.x
-  install_tool: 'yarn'
+  package_manager: 'yarn'
   before: []
   after: []
   azure_coverage: False
@@ -19,10 +19,10 @@ jobs:
     inputs:
       versionSpec: ${{ parameters.node_version }}
     displayName: 'Install Node.js'
-  - ${{ if eq(parameters.install_tool, 'npm') }}:
+  - ${{ if eq(parameters.package_manager, 'npm') }}:
     - script: npm install
       displayName: 'Instal dependencies from NPM'
-  - ${{ if eq(parameters.install_tool, 'yarn') }}:
+  - ${{ if eq(parameters.package_manager, 'yarn') }}:
     - script: yarn install --ignore-engines
       displayName: 'Instal dependencies using Yarn'
   - ${{ parameters.before }}
