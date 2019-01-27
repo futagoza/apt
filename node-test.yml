@@ -1,43 +1,24 @@
 parameters:
-  id: 'NodeTestRunner'
   name: 'Test'
   vmImage: 'ubuntu-16.04'
-  node_version: 10.x
+  node_versions:
+    v6: 6.x
+    v8: 8.x
+    v10: 10.x
   install_tool: 'yarn'
   before: []
   after: []
   azure_coverage: False
 
 jobs:
-- job: ${{ parameters.id }}
-  displayName: ${{ format('{0} (Node {1})', parameters.name, parameters.node_version) }}
-  pool: 
-    vmImage: ${{ parameters.vmImage }}
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: ${{ parameters.node_version }}
-    displayName: 'Install Node.js'
-  - ${{ if eq(parameters.install_tool, 'npm') }}:
-    - script: npm install
-      displayName: 'Instal dependencies from NPM'
-  - ${{ if eq(parameters.install_tool, 'yarn') }}:
-    - script: yarn install --ignore-engines
-      displayName: 'Instal dependencies using Yarn'
-  - ${{ parameters.before }}
-  - script: npm test
-    displayName: 'Run tests'
-  - ${{ parameters.after }}
-  - ${{ if eq(parameters.azure_coverage, True) }}:
-    - task: PublishTestResults@2
-      displayName: 'Publish test results (Azure Pipelines)'
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'coverage/junit.xml'
-    - task: PublishCodeCoverageResults@1
-      displayName: 'Publish code coverage results (Azure Pipelines)'
-      inputs: 
-        codeCoverageTool: Cobertura
-        summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
-        reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'
+- ${{ each node_version in parameters.node_versions }}:
+  - template: node-test-runner.yml
+    parameters:
+      id: ${{ format('NodeTestRunner_{0}', node_version.key) }}
+      name: ${{ parameters.name }}
+      vmImage: ${{ parameters.vmImage }}
+      node_version: ${{ node_version.value }}
+      install_tool: ${{ parameters.install_tool }}
+      before: ${{ parameters.before }}
+      after: ${{ parameters.after }}
+      azure_coverage: ${{ parameters.azure_coverage }}
