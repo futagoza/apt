@@ -7,13 +7,30 @@ parameters:
     v8: 8.x
     v10: 10.x
   package_manager: 'yarn'
-  before: []
+  prepost_vmImage: 'ubuntu-16.04'
+  beforeAll: False
+  beforeEach: []
   npm_test: True
-  after: []
+  afterEach: []
+  afterAll: False
   publish_test_results_to_pipelines: False
   publish_code_coverage_to_pipelines: False
 
 jobs:
+- ${{ if not(parameters.beforeAll, False) }}:
+  - job: ${{ format('Pre{0}', parameters.name) }}
+    displayName: ${{ format('Before {0}', parameters.name) }}
+    pool: 
+      vmImage: ${{ parameters.prepost_vmImage }}
+    variables:
+      "System.PreferGit": true
+      CI_NAME: Azure Pipelines
+      CI_BUILD_ID: $(Build.BuildId)
+      CI_BUILD_URL: $(Build.BuildUri)
+      GIT_BRANCH: $[ coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranchName'], variables['Build.SourceBranch'], 'not-found') ]
+      GIT_COMMIT_SHA: $[ coalesce(variables['System.PullRequest.SourceCommitId'], variables['Build.SourceVersion'], 'not-found') ]
+    steps:
+    - ${{ parameters.beforeAll }}
 - ${{ each platform in parameters.platforms }}:
   - ${{ each node_version in parameters.node_versions }}:
     - template: node-test-runner.yml
@@ -24,8 +41,22 @@ jobs:
         vmOS: ${{ platform.key }}
         node_version: ${{ node_version.value }}
         package_manager: ${{ parameters.package_manager }}
-        before: ${{ parameters.before }}
+        before: ${{ parameters.beforeEach }}
         npm_test: ${{ parameters.npm_test }}
-        after: ${{ parameters.after }}
+        after: ${{ parameters.afterEach }}
         publish_test_results_to_pipelines: ${{ parameters.publish_test_results_to_pipelines }}
         publish_code_coverage_to_pipelines: ${{ parameters.publish_code_coverage_to_pipelines }}
+- ${{ if not(parameters.afterAll, False) }}:
+  - job: ${{ format('Post{0}', parameters.name) }}
+    displayName: ${{ format('After {0}', parameters.name) }}
+    pool: 
+      vmImage: ${{ parameters.prepost_vmImage }}
+    variables:
+      "System.PreferGit": true
+      CI_NAME: Azure Pipelines
+      CI_BUILD_ID: $(Build.BuildId)
+      CI_BUILD_URL: $(Build.BuildUri)
+      GIT_BRANCH: $[ coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranchName'], variables['Build.SourceBranch'], 'not-found') ]
+      GIT_COMMIT_SHA: $[ coalesce(variables['System.PullRequest.SourceCommitId'], variables['Build.SourceVersion'], 'not-found') ]
+    steps:
+    - ${{ parameters.afterAll }}
