@@ -17,7 +17,7 @@ parameters:
   publish_code_coverage_to_pipelines: False
 
 jobs:
-- ${{ if not(parameters.beforeAll, False) }}:
+- ${{ if ne(parameters.beforeAll, False) }}:
   - job: ${{ format('Pre{0}', parameters.name) }}
     displayName: ${{ format('Before {0}', parameters.name) }}
     pool: 
@@ -46,7 +46,7 @@ jobs:
         after: ${{ parameters.afterEach }}
         publish_test_results_to_pipelines: ${{ parameters.publish_test_results_to_pipelines }}
         publish_code_coverage_to_pipelines: ${{ parameters.publish_code_coverage_to_pipelines }}
-- ${{ if not(parameters.afterAll, False) }}:
+- ${{ if ne(parameters.afterAll, False) }}:
   - job: ${{ format('Post{0}', parameters.name) }}
     displayName: ${{ format('After {0}', parameters.name) }}
     pool: 
