@@ -16,6 +16,13 @@ jobs:
   displayName: ${{ format('{0} ({1}, Node {2})', parameters.name, parameters.vmOS, parameters.node_version) }}
   pool: 
     vmImage: ${{ parameters.vmImage }}
+  variables:
+    "System.PreferGit": true
+    CI_NAME: Azure Pipelines
+    CI_BUILD_ID: $(Build.BuildId)
+    CI_BUILD_URL: $(Build.BuildUri)
+    GIT_BRANCH: $[ coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranchName'], variables['Build.SourceBranch'], 'not-found') ]
+    GIT_COMMIT_SHA: $[ coalesce(variables['System.PullRequest.SourceCommitId'], variables['Build.SourceVersion'], 'not-found') ]
   steps:
   - task: NodeTool@0
     inputs:
