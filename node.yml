@@ -1,0 +1,34 @@
+parameters:
+  id: 'NodeScriptRunner'
+  name: 'Node Script'
+  vmImage: 'ubuntu-16.04'
+  node_version: 10.x
+  npm_installer: 'yarn'
+  scripts: []
+  vars: {}
+
+jobs:
+- job: ${{ parameters.id }}
+  displayName: ${{ parameters.name }}
+  pool: 
+    vmImage: ${{ parameters.vmImage }}
+  variables:
+    "System.PreferGit": true
+    CI_NAME: Azure Pipelines
+    CI_BUILD_ID: $(Build.BuildId)
+    CI_BUILD_URL: $(Build.BuildUri)
+    GIT_BRANCH: $[ coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranchName'], variables['Build.SourceBranch'], 'not-found') ]
+    GIT_COMMIT_SHA: $[ coalesce(variables['System.PullRequest.SourceCommitId'], variables['Build.SourceVersion'], 'not-found') ]
+    ${{ parameters.vars }}
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: ${{ parameters.node_version }}
+    displayName: 'Install Node.js'
+  - ${{ if eq(parameters.npm_installer, 'npm') }}:
+    - script: npm install
+      displayName: 'Install dependencies from NPM'
+  - ${{ if eq(parameters.npm_installer, 'yarn') }}:
+    - script: yarn install --ignore-engines
+      displayName: 'Install dependencies using Yarn'
+  - ${{ parameters.scripts }}

@@ -12,44 +12,30 @@ parameters:
   publish_code_coverage_to_pipelines: False
 
 jobs:
-- job: ${{ parameters.id }}
-  displayName: ${{ format('{0} ({1}, Node {2})', parameters.name, parameters.vmOS, parameters.node_version) }}
-  pool: 
-    vmImage: ${{ parameters.vmImage }}
-  variables:
-    "System.PreferGit": true
-    CI_NAME: Azure Pipelines
-    CI_BUILD_ID: $(Build.BuildId)
-    CI_BUILD_URL: $(Build.BuildUri)
-    GIT_BRANCH: $[ coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranchName'], variables['Build.SourceBranch'], 'not-found') ]
-    GIT_COMMIT_SHA: $[ coalesce(variables['System.PullRequest.SourceCommitId'], variables['Build.SourceVersion'], 'not-found') ]
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: ${{ parameters.node_version }}
-    displayName: 'Install Node.js'
-  - ${{ if eq(parameters.package_manager, 'npm') }}:
-    - script: npm install
-      displayName: 'Install dependencies from NPM'
-  - ${{ if eq(parameters.package_manager, 'yarn') }}:
-    - script: yarn install --ignore-engines
-      displayName: 'Install dependencies using Yarn'
-  - ${{ parameters.before }}
-  - ${{ if eq(parameters.npm_test, True) }}:
-    - script: npm test
-      displayName: 'Run tests'
-  - ${{ parameters.after }}
-  - ${{ if eq(parameters.publish_test_results_to_pipelines, True) }}:
-    - task: PublishTestResults@2
-      displayName: 'Publish test results (Azure Pipelines)'
-      condition: succeededOrFailed()
-      inputs:
-        testRunner: JUnit
-        testResultsFiles: 'coverage/junit.xml'
-  - ${{ if eq(parameters.publish_code_coverage_to_pipelines, True) }}:
-    - task: PublishCodeCoverageResults@1
-      displayName: 'Publish code coverage results (Azure Pipelines)'
-      inputs: 
-        codeCoverageTool: Cobertura
-        summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
-        reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'
+- template: node.yml
+  parameters:
+    id: ${{ parameters.id }}
+    name: ${{ format('{0} ({1}, Node {2})', parameters.name, parameters.vmOS, parameters.node_version) }}
+    vmImage: ${{ platform.vmImage }}
+    node_version: ${{ node_version.node_version }}
+    npm_installer: ${{ parameters.package_manager }}
+    scripts:
+      - ${{ parameters.before }}
+      - ${{ if eq(parameters.npm_test, True) }}:
+        - script: npm test
+          displayName: 'Run tests'
+      - ${{ parameters.after }}
+      - ${{ if eq(parameters.publish_test_results_to_pipelines, True) }}:
+        - task: PublishTestResults@2
+          displayName: 'Publish test results (Azure Pipelines)'
+          condition: succeededOrFailed()
+          inputs:
+            testRunner: JUnit
+            testResultsFiles: 'coverage/junit.xml'
+      - ${{ if eq(parameters.publish_code_coverage_to_pipelines, True) }}:
+        - task: PublishCodeCoverageResults@1
+          displayName: 'Publish code coverage results (Azure Pipelines)'
+          inputs: 
+            codeCoverageTool: Cobertura
+            summaryFileLocation: '$(System.DefaultWorkingDirectory)/coverage/cobertura-coverage.xml'
+            reportDirectory: '$(System.DefaultWorkingDirectory)/coverage/lcov-report'

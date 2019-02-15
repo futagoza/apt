@@ -8,6 +8,7 @@ parameters:
     v10: 10.x
   package_manager: 'yarn'
   prepost_vmImage: 'ubuntu-16.04'
+  prepost_node_version: 10.x
   beforeAll: False
   beforeEach: []
   npm_test: True
@@ -18,19 +19,14 @@ parameters:
 
 jobs:
 - ${{ if ne(parameters.beforeAll, False) }}:
-  - job: ${{ format('Pre{0}', parameters.name) }}
-    displayName: ${{ format('Before {0}', parameters.name) }}
-    pool: 
-      vmImage: ${{ parameters.prepost_vmImage }}
-    variables:
-      "System.PreferGit": true
-      CI_NAME: Azure Pipelines
-      CI_BUILD_ID: $(Build.BuildId)
-      CI_BUILD_URL: $(Build.BuildUri)
-      GIT_BRANCH: $[ coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranchName'], variables['Build.SourceBranch'], 'not-found') ]
-      GIT_COMMIT_SHA: $[ coalesce(variables['System.PullRequest.SourceCommitId'], variables['Build.SourceVersion'], 'not-found') ]
-    steps:
-    - ${{ parameters.beforeAll }}
+  - template: node.yml
+    parameters:
+      id: ${{ format('Pre{0}', parameters.name) }}
+      name: ${{ format('Before {0}', parameters.name) }}
+      vmImage: ${{ platform.prepost_vmImage }}
+      node_version: ${{ node_version.prepost_node_version }}
+      npm_installer: ${{ parameters.package_manager }}
+      scripts: ${{ parameters.beforeAll }}
 - ${{ each platform in parameters.platforms }}:
   - ${{ each node_version in parameters.node_versions }}:
     - template: node-test-runner.yml
@@ -47,16 +43,11 @@ jobs:
         publish_test_results_to_pipelines: ${{ parameters.publish_test_results_to_pipelines }}
         publish_code_coverage_to_pipelines: ${{ parameters.publish_code_coverage_to_pipelines }}
 - ${{ if ne(parameters.afterAll, False) }}:
-  - job: ${{ format('Post{0}', parameters.name) }}
-    displayName: ${{ format('After {0}', parameters.name) }}
-    pool: 
-      vmImage: ${{ parameters.prepost_vmImage }}
-    variables:
-      "System.PreferGit": true
-      CI_NAME: Azure Pipelines
-      CI_BUILD_ID: $(Build.BuildId)
-      CI_BUILD_URL: $(Build.BuildUri)
-      GIT_BRANCH: $[ coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranchName'], variables['Build.SourceBranch'], 'not-found') ]
-      GIT_COMMIT_SHA: $[ coalesce(variables['System.PullRequest.SourceCommitId'], variables['Build.SourceVersion'], 'not-found') ]
-    steps:
-    - ${{ parameters.afterAll }}
+  - template: node.yml
+    parameters:
+      id: ${{ format('Post{0}', parameters.name) }}
+      name: ${{ format('After {0}', parameters.name) }}
+      vmImage: ${{ platform.prepost_vmImage }}
+      node_version: ${{ node_version.prepost_node_version }}
+      npm_installer: ${{ parameters.package_manager }}
+      scripts: ${{ parameters.afterAll }}
