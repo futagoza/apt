@@ -16,8 +16,8 @@ jobs:
   parameters:
     id: ${{ parameters.id }}
     name: ${{ format('{0} ({1}, Node {2})', parameters.name, parameters.vmOS, parameters.node_version) }}
-    vmImage: ${{ platform.vmImage }}
-    node_version: ${{ node_version.node_version }}
+    vmImage: ${{ parameters.vmImage }}
+    node_version: ${{ parameters.node_version }}
     npm_installer: ${{ parameters.package_manager }}
     actions:
       - ${{ parameters.before }}
