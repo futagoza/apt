@@ -20,8 +20,8 @@ jobs:
   pool: 
     vmImage: ${{ parameters.vmImage }}
   variables:
-    ${{ parameters.ci_env }}
-    ${{ parameters.env }}
+    ${{ insert }}: ${{ parameters.ci_env }}
+    ${{ insert }}: ${{ parameters.env }}
   steps:
   - task: NodeTool@0
     inputs:
