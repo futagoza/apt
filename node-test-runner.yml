@@ -19,7 +19,7 @@ jobs:
     vmImage: ${{ platform.vmImage }}
     node_version: ${{ node_version.node_version }}
     npm_installer: ${{ parameters.package_manager }}
-    scripts:
+    actions:
       - ${{ parameters.before }}
       - ${{ if eq(parameters.npm_test, True) }}:
         - script: npm test

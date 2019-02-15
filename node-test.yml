@@ -26,7 +26,7 @@ jobs:
       vmImage: ${{ platform.prepost_vmImage }}
       node_version: ${{ node_version.prepost_node_version }}
       npm_installer: ${{ parameters.package_manager }}
-      scripts: ${{ parameters.beforeAll }}
+      actions: ${{ parameters.beforeAll }}
 - ${{ each platform in parameters.platforms }}:
   - ${{ each node_version in parameters.node_versions }}:
     - template: node-test-runner.yml
@@ -50,4 +50,4 @@ jobs:
       vmImage: ${{ platform.prepost_vmImage }}
       node_version: ${{ node_version.prepost_node_version }}
       npm_installer: ${{ parameters.package_manager }}
-      scripts: ${{ parameters.afterAll }}
+      actions: ${{ parameters.afterAll }}

@@ -4,7 +4,7 @@ parameters:
   vmImage: 'ubuntu-16.04'
   node_version: 10.x
   npm_installer: 'yarn'
-  scripts: []
+  actions: []
   vars: {}
 
 jobs:
@@ -31,4 +31,4 @@ jobs:
   - ${{ if eq(parameters.npm_installer, 'yarn') }}:
     - script: yarn install --ignore-engines
       displayName: 'Install dependencies using Yarn'
-  - ${{ parameters.scripts }}
+  - ${{ parameters.actions }}
