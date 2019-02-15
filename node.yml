@@ -5,7 +5,14 @@ parameters:
   node_version: 10.x
   npm_installer: 'yarn'
   actions: []
-  vars: {}
+  env: {}
+  ci_env:
+    "System.PreferGit": true
+    CI_NAME: Azure Pipelines
+    CI_BUILD_ID: $(Build.BuildId)
+    CI_BUILD_URL: $(Build.BuildUri)
+    GIT_BRANCH: $[ coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranchName'], variables['Build.SourceBranch'], 'not-found') ]
+    GIT_COMMIT_SHA: $[ coalesce(variables['System.PullRequest.SourceCommitId'], variables['Build.SourceVersion'], 'not-found') ]
 
 jobs:
 - job: ${{ parameters.id }}
@@ -13,13 +20,8 @@ jobs:
   pool: 
     vmImage: ${{ parameters.vmImage }}
   variables:
-    "System.PreferGit": true
-    CI_NAME: Azure Pipelines
-    CI_BUILD_ID: $(Build.BuildId)
-    CI_BUILD_URL: $(Build.BuildUri)
-    GIT_BRANCH: $[ coalesce(variables['System.PullRequest.SourceBranch'], variables['Build.SourceBranchName'], variables['Build.SourceBranch'], 'not-found') ]
-    GIT_COMMIT_SHA: $[ coalesce(variables['System.PullRequest.SourceCommitId'], variables['Build.SourceVersion'], 'not-found') ]
-    ${{ parameters.vars }}
+    ${{ parameters.ci_env }}
+    ${{ parameters.env }}
   steps:
   - task: NodeTool@0
     inputs:
