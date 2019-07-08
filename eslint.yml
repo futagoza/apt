@@ -1,7 +1,7 @@
 parameters:
   name: 'Lint'
   vmImage: 'ubuntu-16.04'
-  node_version: 10.x
+  node_version: 12.x
   install_scope: 'eslint'
   job_script: 'npx eslint .'
 

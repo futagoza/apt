@@ -3,12 +3,12 @@ parameters:
   platforms:
     Linux: 'ubuntu-16.04'
   node_versions:
-    v6: 6.x
     v8: 8.x
     v10: 10.x
+    v12: 12.x
   package_manager: 'yarn'
   prepost_vmImage: 'ubuntu-16.04'
-  prepost_node_version: 10.x
+  prepost_node_version: 12.x
   beforeAll: False
   beforeEach: []
   npm_test: True

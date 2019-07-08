@@ -3,7 +3,7 @@ parameters:
   name: 'Test'
   vmImage: 'ubuntu-16.04'
   vmOS: 'Linux'
-  node_version: 10.x
+  node_version: 12.x
   package_manager: 'yarn'
   before: []
   npm_test: True

@@ -2,7 +2,7 @@ parameters:
   id: 'NodeScriptRunner'
   name: 'Node Script'
   vmImage: 'ubuntu-16.04'
-  node_version: 10.x
+  node_version: 12.x
   npm_installer: 'yarn'
   actions: []
   variables: {}
