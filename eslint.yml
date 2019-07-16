@@ -2,8 +2,8 @@ parameters:
   name: 'Lint'
   vmImage: 'ubuntu-16.04'
   node_version: 12.x
-  install_scope: 'eslint'
-  job_script: 'npx eslint .'
+  install_scope: 'eslint-config-futagozaryuu'
+  job_script: 'npm run lint'
 
 jobs:
 - job: ${{ parameters.name }}
@@ -14,9 +14,17 @@ jobs:
     inputs:
       versionSpec: ${{ parameters.node_version }}
     displayName: 'Install Node.js'
-  - ${{ if eq(parameters.install_scope, 'eslint') }}:
-    - script: npm i --no-save eslint eslint-config-futagozaryuu
-      displayName: 'Installing minimal dependencies'
+  - ${{ if eq(parameters.install_scope, 'eslint-config-futagozaryuu') }}:
+    - script: |
+        npm i --no-save eslint
+        npm i --no-save @futagoza/eslint-config
+        npm i --no-save @futagoza/eslint-config-core
+        npm i --no-save @futagoza/eslint-config-javascript
+        npm i --no-save @futagoza/eslint-config-node
+        npm i --no-save @futagoza/eslint-config-dev
+        npm i --no-save @futagoza/eslint-config-typescript
+        npm i --no-save @futagoza/eslint-config-vue
+      displayName: 'Installing Eslint and eslint-config-futagozaryuu dependencies'
   - ${{ if eq(parameters.install_scope, 'npm') }}:
     - script: npm install
       displayName: 'Installing dependencies from NPM'
